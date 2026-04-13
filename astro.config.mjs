@@ -2,7 +2,7 @@
 import { defineConfig, envField } from "astro/config";
 import solidJs from "@astrojs/solid-js";
 import peggy from "vite-plugin-peggy-loader";
-import AstroPWA from "@vite-pwa/astro";
+// import AstroPWA from "@vite-pwa/astro";
 import starlight from "@astrojs/starlight";
 import alpinejs from "@astrojs/alpinejs";
 import netlify from "@astrojs/netlify";
@@ -132,23 +132,23 @@ export default defineConfig({
             devtools: true,
         }),
         alpinejs(),
-        AstroPWA({
-            registerType: "autoUpdate",
-            manifest: {
-                name: "Sim8085",
-                short_name: "Sim8085",
-                theme_color: "#ffffff",
-            },
-            includeAssets: ["favicon.svg", "favicon-dark.svg", "favicon.ico", "favicon-with-background.svg"],
-            pwaAssets: {
-                config: true,
-            },
-            workbox: {
-                globIgnores: [
-                    "tips/**", // Exclude all files in the `tips` folder
-                ],
-            },
-        }),
+        // AstroPWA({
+        //     registerType: "autoUpdate",
+        //     manifest: {
+        //         name: "Sim8085",
+        //         short_name: "Sim8085",
+        //         theme_color: "#ffffff",
+        //     },
+        //     includeAssets: ["favicon.svg", "favicon-dark.svg", "favicon.ico", "favicon-with-background.svg"],
+        //     pwaAssets: {
+        //         config: true,
+        //     },
+        //     workbox: {
+        //         globIgnores: [
+        //             "tips/**", // Exclude all files in the `tips` folder
+        //         ],
+        //     },
+        // }),
     ],
     output: "static",
     adapter: netlify({
@@ -211,10 +211,12 @@ export default defineConfig({
             DODO_PLUS_PAYMENT_LINK: envField.string({
                 context: "client",
                 access: "public",
+                optional: true,
             }),
             DODO_DONATION_PAYMENT_LINK: envField.string({
                 context: "client",
                 access: "public",
+                optional: true,
             }),
         },
     },

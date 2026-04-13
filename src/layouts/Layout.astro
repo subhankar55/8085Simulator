@@ -2,8 +2,8 @@
 import '../tailwind.main.css';
 import '../themes/light.css';
 import '../themes/dark.css';
-import { pwaInfo } from 'virtual:pwa-info';
-import { pwaAssetsHead } from 'virtual:pwa-assets/head';
+// import { pwaInfo } from 'virtual:pwa-info';
+// import { pwaAssetsHead } from 'virtual:pwa-assets/head';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import PostHogInit from '../components/analytics/PostHogInit.astro';
@@ -34,12 +34,12 @@ const { title, showActions, fullwidth, fullHeight, smallFooter, noHeader, noFoot
         <meta name="keywords" content="8085, assembler, simulator, IDE, Intel">
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
-		{ pwaAssetsHead.themeColor && <meta name="theme-color" content={pwaAssetsHead.themeColor.content} /> }
-        { pwaAssetsHead.links.map(link => (
-            <link {...link} />
-        )) }
+        <!-- { pwaAssetsHead.themeColor && <meta name="theme-color" content={pwaAssetsHead.themeColor.content} /> } 
+            { pwaAssetsHead.links.map(link => (
+                <link {...link} />
+            )) }
         <script src="/src/pwa.js"></script>
-        { pwaInfo && <Fragment set:html={pwaInfo.webManifest.linkTag} /> }
+        { pwaInfo && <Fragment set:html={pwaInfo.webManifest.linkTag} /> } -->
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="icon" type="image/svg+xml" href="/favicon-dark.svg" media="(prefers-color-scheme: dark)"/>
 		<script is:inline>
