@@ -1,0 +1,181 @@
+---
+import Layout from '../layouts/Layout.astro';
+import GitHubIcon from '../icons/github.svg?raw';
+import PayPalIcon from '../icons/paypal.svg?raw';
+import KoFiIcon from '../icons/kofi.svg?raw';
+import BmcIcon from '../icons/bmc.svg?raw';
+import RazorPayIcon from '../icons/razorpay.svg?raw';
+import TriangleInfoIcon from '../icons/triangle-info.svg?raw';
+import { DODO_DONATION_PAYMENT_LINK } from 'astro:env/client';
+---
+
+<Layout title="Support Sim8085" showActions={false} fullwidth={false} fullHeight={false}>
+    <main class="privacy-policy max-w-4xl mx-auto py-8 px-4">
+        <h1 class="text-2xl mb-6 font-bold">❤️ Support Sim8085</h1>
+        <p class="mb-2 leading-relaxed">
+            If this project has been helpful to you, I'm truly grateful for the opportunity to make a difference.
+        </p>
+        <p class="mb-2 leading-relaxed">
+            Please consider buying a virtual coffee or making a small donation to help me continue working on projects like this.
+        </p>
+        <p class="mb-10 leading-relaxed">
+            Every contribution matters. 🙏
+        </p>
+        <!-- Payment Options Section -->
+        <div class="flex flex-col gap-8 items-center bg-main-background px-4 pt-8 pb-6 rounded-lg shadow-lg">
+
+            <!-- 🔶 Razorpay — Primary CTA -->
+            <div class="w-full max-w-md text-center" title="Recommended for Indian users">
+                <a
+                    href={`${DODO_DONATION_PAYMENT_LINK}?quantity=1&redirect_url=https://www.sim8085.com%2Fdonation-thank-you%2F"`}
+                    class="payment-link rounded bg-terminal px-4 py-2 text-white hover:bg-terminal-700 transition"
+                >
+                    Donate Now
+                </a>
+                <p class="mt-2 text-sm text-secondary-foreground italic">
+                Supports UPI, Cards, NetBanking and international payments.
+                </p>
+            </div>
+
+            <!-- 💳 Secondary Options -->
+            <div class="w-full max-w-4xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 justify-items-center pt-4 border-t border-dashed border-secondary-border">
+
+                <div title="For international supporters">
+                <a target="_blank" href="https://ko-fi.com/O4O8170QHN" class="payment-link text-xl flex gap-1 items-center text-active-foreground hover:text-blue-foreground">
+                    <Fragment set:html={KoFiIcon} />
+                    <span>Ko-Fi</span>
+                </a>
+                <p class="mt-2 text-sm text-secondary-foreground">PayPal or Card</p>
+                </div>
+
+                <div title="Alternative for PayPal users">
+                <form action="https://www.paypal.com/ncp/payment/9W3T973GRR7LN" method="post" target="_top">
+                    <button class="text-xl flex gap-1 items-center text-active-foreground hover:text-blue-foreground cursor-pointer" type="submit">
+                    <Fragment set:html={PayPalIcon} />
+                    <span>PayPal</span>
+                    </button>
+                </form>
+                <p class="mt-2 text-sm text-secondary-foreground">Great for international supporters</p>
+                </div>
+
+                <div title="May not work for accounts outside India.">
+                <a target="_blank" href="https://www.buymeacoffee.com/debjit.biswas" class="payment-link text-xl flex gap-1 items-center text-active-foreground hover:text-blue-foreground">
+                    <Fragment set:html={BmcIcon} />
+                    <span>Buy Me a Coffee</span>
+                </a>
+                <p class="mt-2 text-sm text-secondary-foreground">Card payments only</p>
+                </div>
+
+                <div title="Via GitHub Sponsors">
+                <a target="_blank" href="https://github.com/sponsors/debjitbis08?o=esb" class="payment-link text-xl flex gap-1 items-end text-active-foreground hover:text-blue-foreground">
+                    <Fragment set:html={GitHubIcon} />
+                    <span>GitHub</span>
+                </a>
+                <p class="mt-2 text-sm text-secondary-foreground">Best for recurring support</p>
+                </div>
+
+            </div>
+        </div>
+        <div class="flex mt-8 md:gap-16 items-start flex-wrap justify-stretch">
+        </div>
+    <div class="mt-6">
+        <p class="mb-6 leading-relaxed">
+            Sim8085 is designed and maintained currently just by <a href="https://www.debjitbiswas.com">me</a>. Sometime ago I decided to leave my
+            day job to focus full-time on projects like this. This decision allows me to continuously improve and add new features to the project, but it also means that I depend on donations for my livelihood.
+        </p>
+        <p class="mb-6 leading-relaxed">
+My goal is to create <a href="https://github.com/debjitbis08/logo">tools</a> and <a href="https://www.lambda-classes.com">courses</a> for students and developers to make their lives easier and help them learn.
+        </p>
+
+
+        <h2 class="text-xl font-bold mt-12 mb-4">💎 Sim8085 Plus</h2>
+        <p class="mb-4 leading-relaxed">
+            Sim8085 Plus is a one-time upgrade designed to support serious learners and power users. It unlocks useful features like:
+        </p>
+        <ul class="list-disc list-inside mb-4">
+            <li>Saving unlimited files</li>
+            <li>File versioning and history</li>
+            <li>Future AI-powered tutorials and insights</li>
+        </ul>
+        <p class="mb-4 leading-relaxed">
+            There's no subscription — just a simple one-time payment. If you use Sim8085 regularly and want to support its future, Plus is the best way to do so.
+        </p>
+        <p class="mb-8 leading-relaxed">
+                        You can learn more or upgrade from the <a href="/upgrade/" class="underline underline-offset-4">Pricing page</a>.
+        </p>
+
+        <h2 class="text-xl font-bold mt-12 mb-4">📊 Revenue So Far</h2>
+        <p class="mb-4 leading-relaxed">
+            I believe in being transparent about what Sim8085 earns. As of now:
+        </p>
+        <ul class="list-disc list-inside mb-4 text-sm">
+            <li><strong>Donations:</strong> $3.11 (Pending Payout)</li>
+            <li><strong>Plus Plan:</strong> $37 (Pending Payout)</li>
+            <li><strong>Ad Revenue:</strong> $70 (Pending Payout)</li>
+        </ul>
+        <p class="mb-6 leading-relaxed">
+            These numbers are small, but I'm grateful for every bit of support. It helps me stay focused on improving the project without external funding.
+        </p>
+
+        <p class="mb-6 leading-relaxed">
+            <span class="underline underline-offset-4">If you're unable to donate</span>, there are other ways to show your support:
+        </p>
+
+            <div class="">
+                <div class="mb-8">
+                    <h3 class="font-bold mb-4">📣 Spread the Word</h3>
+                    <p>
+                        Share Sim8085 with your classmates, colleagues, or on social media to help more people discover and benefit from it.
+                    </p>
+                </div>
+                <div>
+                    <h3 class="font-bold mb-4">⭐ Star the Project on GitHub</h3>
+                    <p>
+                        Starring the repository not only shows your appreciation but also helps the project gain visibility and encourages contributions from the community.
+                    </p>
+                    <p class="mt-4 mb-6">
+                        <a class="github-button" href="https://github.com/debjitbis08/sim8085" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star debjitbis08/sim8085 on GitHub">Star</a>
+                    </p>
+                </div>
+                <div>
+                    <h3 class="font-bold mb-4">💡 Provide Feedback</h3>
+                    <p>
+                        Have suggestions or ideas? Share your thoughts on our <a href="https://github.com/debjitbis08/sim8085/discussions/categories/ideas">discussion forums</a> on GitHub and shape future updates.
+                        You may also ask questions about 8085 ALP on the <a href="https://github.com/debjitbis08/sim8085/discussions/categories/q-a">Q&A forum</a>. Other students or educators may be able to answer your questions.
+                    </p>
+                    <p class="mt-4 mb-6">
+                        <a class="github-button" href="https://github.com/debjitbis08/sim8085/discussions" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-comment-discussion" data-size="large" aria-label="Discuss debjitbis08/sim8085 on GitHub">Discuss</a>
+                    </p>
+                </div>
+                <div>
+                    <h3 class="font-bold mb-4">🛠️ Contribute to the Project</h3>
+                    <p>
+                        If you're familiar with coding or documentation, consider contributing to the Sim8085 project on GitHub. I need help with writing the documentation for all the instructions and directives.
+                    </p>
+                    <p class="mt-4 mb-6">
+                        <a class="github-button" href="https://github.com/debjitbis08/sim8085/fork" data-color-scheme="no-preference: light; light: light; dark: dark;" data-icon="octicon-repo-forked" data-size="large" data-show-count="true" aria-label="Fork debjitbis08/sim8085 on GitHub">Fork</a>
+                    </p>
+                </div>
+            </div>
+
+
+        <p class="mb-6 leading-relaxed">
+            Additionally, I plan to create detailed tutorials on 8085 assembly language programming to make learning more effective. These tutorials will be priced affordably to ensure they remain accessible to students.
+        </p>
+
+        <p class="leading-relaxed">
+            Thank you for your support in keeping Sim8085 running and improving — it's your involvement that helps this tool continue to grow!
+        </p>
+    </div>
+    </main>
+</Layout>
+
+<style>
+@reference "tailwindcss";
+
+a:not(.payment-link) {
+    @apply text-[rgb(var(--sm-blue-foreground))]
+}
+</style>
+
+<script is:inline defer src="https://buttons.github.io/buttons.js"></script>

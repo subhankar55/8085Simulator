@@ -1,0 +1,38 @@
+.cm-editor {
+    height: 100%;
+}
+
+.cm-line.cm-activeLine {
+    background-color: rgba(var(--sm-editor-active-line), 0.3);
+}
+
+.cm-debug-line-highlight,
+.cm-line.cm-activeLine.cm-debug-line-highlight {
+    background-color: rgb(var(--sm-editor-debug-line));
+}
+
+.cm-editor .cm-gutters {
+    @apply border-0;
+    background-color: rgb(var(--sm-main-background));
+}
+
+.cm-editor .cm-activeLineGutter {
+    background-color: rgb(var(--sm-secondary-background));
+}
+
+.cm-editor .cm-cursor {
+    border-left: 1px solid rgb(var(--sm-editor-cursor));
+}
+
+.cm-editor .cm-content {
+    font-size: 0.85rem;
+}
+
+.cm-editor > .cm-scroller > .cm-selectionLayer .cm-selectionBackground,
+.cm-editor.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground {
+    background-color: rgb(var(--sm-editor-selection-background));
+}
+
+.cm-editor.cm-focused {
+    outline: none;
+}

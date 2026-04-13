@@ -1,0 +1,114 @@
+---
+import GithubIcon from '../icons/github.svg?raw';
+import BMCIcon from '../icons/bmc.svg?raw';
+import PayPalIcon from '../icons/paypal.svg?raw';
+import KoFiIcon from '../icons/kofi.svg?raw';
+import RazorPayIcon from '../icons/razorpay.svg?raw';
+const year = new Date().getFullYear();
+
+interface Props {
+	small?: boolean;
+}
+
+const { small } = Astro.props;
+---
+{small && (
+<footer class="h-7 bg-page-background text-secondary-foreground z-999 text-xs tracking-wider hidden md:block">
+    <div class={`flex items-center justify-center ${small ? "mt-2" : "my-5"}`}>
+        <a href="/docs/en/" target="_blank" class="hover:text-active-foreground transition-colors">Documentation</a>
+        <span class="px-2">·</span>
+        {/* <a href="https://www.debjitbiswas.com/tags/sim8085/" target="_blank" class="hover:text-active-foreground transition-colors">Blog</a>
+        <span class="px-2">·</span> */}
+        <!-- <FAQs /> -->
+        <a href="/changelog/" target="_blank" class="hover:text-active-foreground transition-colors">Changelog</a>
+        <span class="px-2">·</span>
+        <a href="https://github.com/debjitbis08/sim8085" target="_blank" class="hover:text-active-foreground transition-colors">GitHub</a>
+        <span class="px-2">·</span>
+        <a href="https://github.com/debjitbis08/sim8085/discussions/categories/ideas" target="_blank" class="hover:text-active-foreground transition-colors">Submit an Idea</a>
+        <span class="px-2">·</span>
+        <a href="https://github.com/debjitbis08/sim8085/discussions/categories/q-a" target="_blank" class="hover:text-active-foreground transition-colors">Discussions</a>
+        <span class="px-2">·</span>
+        <a href="/tos/" target="_blank" class="hover:text-active-foreground transition-colors">Terms & Conditions</a>
+        <span class="px-2">·</span>
+        <a href="/privacy-policy/" target="_blank" class="hover:text-active-foreground transition-colors">Privacy Policy</a>
+        <span class="px-2">·</span>
+        <p>&copy; Copyright {year} — <a href="https://www.debjitbiswas.com" target="_blank" class="hover:text-active-foreground transition-colors">Debjit Biswas</a></p>
+    </div>
+</footer>
+)}
+
+{!small && (
+<footer class="py-5 px-4 bg-secondary-background text-secondary-foreground z-999 border-t border-secondary-border text-xs md:text-sm">
+    <div class="max-w-4xl mx-auto">
+        <div class="flex flex-wrap items-start justify-between md:justify-start">
+            <div class="flex flex-row md:flex-col items-center md:items-start md:gap-8 w-full md:w-[50%] md:h-full">
+                <a href="/" class="flex-grow flex items-center gap-2">
+                    <img src="/logo-with-green-background.svg" alt="Sim8085" class="w-6 h-6">
+                    <span class="flex gap-2 text-secondary-foreground">
+                        <span>Sim8085</span>
+                        <span class="hidden md:inline">—</span>
+                        <span class="hidden md:inline">👨‍💻</span>
+                        <span class="hidden md:inline">❤</span>
+                        <span class="hidden md:inline">📘</span>
+                    </span>
+                </a>
+                <div class="flex gap-3 text-inactive-foreground">
+                    <a href="https://github.com/debjitbis08/sim8085" target="_blank" class="text-lg hover:text-active-foreground transition-colors">
+                        <Fragment set:html={GithubIcon} />
+                    </a>
+                    <a href="https://www.buymeacoffee.com/debjit.biswas" target="_blank" class="text-lg hover:text-active-foreground transition-colors">
+                        <Fragment set:html={BMCIcon} />
+                    </a>
+                    <a href="https://ko-fi.com/O4O8170QHN" target="_blank" class="text-lg hover:text-active-foreground transition-colors">
+                        <Fragment set:html={KoFiIcon} />
+                    </a>
+                    <a href="https://www.paypal.com/ncp/payment/9W3T973GRR7LN" target="_blank" class="text-lg hover:text-active-foreground transition-colors">
+                        <Fragment set:html={PayPalIcon} />
+                    </a>
+                    <a href="https://razorpay.com/payment-button/pl_PRRyue1p9GnvTp/view/?utm_source=payment_button&utm_medium=button&utm_campaign=payment_button" target="_blank" class="text-lg hover:text-active-foreground transition-colors">
+                        <Fragment set:html={RazorPayIcon} />
+                    </a>
+                </div>
+            </div>
+            <div class="min-w-[50%] md:min-w-[200px] mt-8 md:mt-0">
+                <h3 class="text-active-foreground mb-3">Product</h3>
+                <ul class="flex flex-col gap-2 text-inactive-foreground">
+                    <li>
+                        <a href="/docs/en/" target="_blank" class="hover:text-active-foreground transition-colors">Documentation</a>
+                    </li>
+                    <li>
+                        <a href="/changelog/" target="_blank" class="hover:text-active-foreground transition-colors">Changelog</a>
+                    </li>
+                    <!-- <li> -->
+                    <!--     <a href="https://www.debjitbiswas.com/tags/sim8085/" target="_blank" class="hover:text-active-foreground transition-colors">Blog</a> -->
+                    <!-- </li> -->
+                </ul>
+            </div>
+            <div class="min-w-[50%] md:min-w-[200px] mt-8 md:mt-0">
+                <h3 class="text-active-foreground mb-3">Community</h3>
+                <ul class="flex flex-col gap-2 text-inactive-foreground">
+                    <li>
+                        <a
+                            href="https://github.com/debjitbis08/sim8085/discussions/categories/q-a"
+                            target="_blank"
+                            class="hover:text-active-foreground transition-colors"
+                        >Discussions</a>
+                    </li>
+                    <li>
+                        <a
+                            href="https://github.com/debjitbis08/sim8085/discussions/categories/ideas"
+                            target="_blank"
+                            class="hover:text-active-foreground transition-colors"
+                        >Submit an Idea</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="flex items-center gap-3 mt-6 text-inactive-foreground">
+            <a href="/tos/" target="_blank" class="hover:text-active-foreground transition-colors">Terms & Conditions</a>
+            <a href="/privacy-policy/" target="_blank" class="hover:text-active-foreground transition-colors">Privacy Policy</a>
+        </div>
+        <p class="mt-4"><span class="text-base align-middle">&copy;</span> Copyright {year} — <a href="https://www.debjitbiswas.com" target="_blank" class="text-inactive-foreground hover:text-active-foreground transition-colors">Debjit Biswas</a></p>
+    </div>
+</footer>
+)}

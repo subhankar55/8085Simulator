@@ -1,0 +1,71 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection, getEntries, render } from 'astro:content';
+
+const dateFormatter = new Intl.DateTimeFormat('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+})
+
+const entries = await Promise.all(
+  (await getCollection("changes"))
+    .sort((entryA, entryB) =>
+      Number(new Date(entryB.data.date)) - Number(new Date(entryA.data.date))
+    )
+    .map(async (entry) => {
+            const { Content } = await render(entry)
+            return {
+                Content,
+                data: entry.data,
+                date: dateFormatter.format(new Date(entry.data.date))
+            };
+    })
+);
+---
+
+<Layout title="Changelog - Sim8085" showActions={false} fullwidth={false} fullHeight={false}>
+    <main class="privacy-policy max-w-4xl mx-auto py-8 px-4 md:px-6">
+        <section>
+            <div class="lg:max-w-[1024px] flex flex-col sm:flex-col md:flex-row items-start gap-3 mt-8 mb-8 md:mb-16 pb-16 border-b border-b-gray-800">
+                <div class="text-transparent hidden md:block lg:w-[256px]">
+                    <p class="font-mono">December 00, 0000</p>class
+                </div>
+                <div>
+                    <h2 class="text-4xl">Changelog</h2>
+                    <p class="dark:text-gray-500 mt-2">New updates and improvements for Sim8085</p>
+                    <div class="mt-2">
+                        <a href="https://github.com/debjitbis08/sim8085/releases/" class="text-blue-600 dark:text-blue-400 font-bold">Detailed Changelog</a>
+                    </div>
+                </div>
+            </div>
+            <div class="lg:max-w-[1024px]">
+                {entries.map((entry, index) => (
+                  <div class="p-0 md:p-4 mb-4 flex flex-col sm:flex-col md:flex-row items-start gap-3">
+                    <div class="lg:w-[256px] dark:text-gray-500 static md:sticky top-16 mb-4 md:mb-0">
+                        <p class="mb-2 font-mono">
+                            {entry.date}
+                        </p>
+                    </div>
+                    <div class="changelog-entry lg:w-[588px]">
+                        <div class="prose dark:prose-invert">
+                            <entry.Content />
+                        </div>
+                        <div>
+                            <h3 class="mt-4">Detailed Changelogs</h3>
+                            <ul>
+                            {entry.data.versions.map((version) => (
+                                <li>
+                                    <a href={`https://github.com/debjitbis08/sim8085/releases/tag/v${version}`} class="text-blue-600 dark:text-blue-400">v{version}</a>
+                                </li>
+                            ))}
+                            </ul>
+                        </div>
+                    </div>
+                  </div>
+                ))}
+            </div>
+        </section>
+    </main>
+</Layout>
+

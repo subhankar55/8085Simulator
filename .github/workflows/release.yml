@@ -1,0 +1,40 @@
+name: Release
+on:
+  push:
+    branches:
+      - master # or main
+
+permissions:
+  contents: write # for checkout
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # to be able to publish a GitHub release
+      issues: write # to be able to comment on released issues
+      pull-requests: write # to be able to comment on released pull requests
+      id-token: write # to enable use of OIDC for npm provenance
+    strategy:
+      matrix:
+        node-version: [20] # Use the desired Node.js version
+    steps:
+      - uses: actions/checkout@v4 # Checkout the repository
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4 # Use pnpm's official GitHub Action
+        with:
+          version: 9 # Specify the pnpm version to use
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "pnpm" # Enable pnpm cache
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      # - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies
+      #   run: pnpm audit
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}
+        run: pnpm semantic-release

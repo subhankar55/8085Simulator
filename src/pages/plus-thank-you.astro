@@ -1,0 +1,160 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { FaSolidFolder, FaSolidShareNodes, FaSolidRobot, FaSolidCircleCheck, FaSolidBan } from "solid-icons/fa";
+import { VsLoading } from 'solid-icons/vs';
+---
+
+<Layout title="Sim8085 Plus – Thank You" showActions={false} fullwidth={false} fullHeight={false}>
+    <main class="mx-auto py-8 px-4" x-data="payment" x-init="init">
+        <h1 class="text-2xl mb-6 font-bold">🎉 Thank You for Supporting Sim8085!</h1>
+        <template x-if="isLoading">
+            <div class="flex items-center gap-2">
+                <VsLoading class="animate-spin" />
+                <span class="text-sm text-inactive-foreground">Validating payment status...</span>
+            </div>
+        </template>
+
+        <template x-if="!user && !isLoading">
+            <div class="text-left">
+                <p class="mb-4 text-red-foreground">Please log in to activate your Plus Plan.</p>
+                <a href="/login/" class="px-4 py-2 bg-yellow-foreground hover:bg-orange-foreground text-gray-900 font-bold rounded">Login</a>
+            </div>
+        </template>
+
+        <template x-if="user && isPlus && !isLoading">
+            <div class="text-left bg-secondary-background border border-terminal rounded p-4 pb-5">
+                <p class="mb-4 text-green-foreground font-medium flex items-center gap-2">
+                    <FaSolidCircleCheck />
+                    <span>Payment successful! Your Sim8085 Plus access is now active.</span>
+                </p>
+                <p class="mb-4 text-sm text-secondary-foreground">
+                    If you don't see Plus features right away, please refresh the page or log out and log back in.
+                </p>
+                <p class="mb-6 text-sm text-secondary-foreground">
+                    If the issue persists or you used the wrong email during payment, feel free to reach out at:
+                    <a href="mailto:support@sim8085.com" class="underline text-blue-foreground">support@sim8085.com</a>
+                </p>
+                <a href="/" class="px-4 py-2 bg-terminal-700 hover:bg-terminal-600 text-gray-100 rounded">Back to Sim8085</a>
+            </div>
+        </template>
+        <template x-if="user && failed">
+            <div class="text-left mt-6 border-t pt-6">
+                <p class="mb-4 text-red-foreground font-medium">
+                    ⚠️ Your payment was successful, but Plus access hasn't activated yet.
+                </p>
+                <p class="mb-2 text-sm text-secondary-foreground">
+                    Please email <a href="mailto:support@sim8085.com" class="underline text-blue-foreground600">support@sim8085.com</a> with your invoice so we can help you activate it manually.
+                </p>
+                <p class="mb-2 text-sm text-muted-foreground">We apologize for the inconvenience.</p>
+            </div>
+        </template>
+
+        <p class="mt-6 mb-6 text-secondary-foreground">
+            Your contribution helps us keep Sim8085 free, open, and growing. Let's take a quick look at what you've unlocked with Plus:
+        </p>
+
+        <div class="my-4 mt-8">
+            <div class="flex items-center gap-4 pb-8">
+                <div class="text-2xl text-green-600 bg-green-200 w-12 h-12 rounded flex items-center justify-center">
+                    <FaSolidFolder />
+                </div>
+                <div>
+                    <h3 class="mb-1">Save and Organize Files</h3>
+                    <p class="text-sm text-secondary-foreground">
+                        Save unlimited files and manage them easily in your workspace.
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4 pb-8">
+                <div class="text-2xl text-blue-600 bg-blue-200 w-12 h-12 rounded flex items-center justify-center">
+                    <FaSolidShareNodes />
+                </div>
+                <div>
+                    <h3 class="mb-1">Public Share Links</h3>
+                    <p class="text-sm text-secondary-foreground">
+                        Share your 8085 code with friends, classmates, or teachers using simple links.
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4 pb-8">
+                <div class="text-2xl text-purple-600 bg-purple-200 w-12 h-12 rounded flex items-center justify-center">
+                    <FaSolidRobot />
+                </div>
+                <div>
+                    <h3 class="mb-1">AI Help for Assembler Errors</h3>
+                    <p class="text-sm text-secondary-foreground">
+                        Stuck on an error? Let AI assist you in understanding and fixing your code.
+                    </p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="text-2xl text-red-600 bg-red-200 w-12 h-12 rounded flex items-center justify-center">
+                    <FaSolidBan />
+                </div>
+                <div>
+                    <h3 class="mb-1">No Ads, No Distractions</h3>
+                    <p class="text-sm text-secondary-foreground">
+                        Enjoy a clean and distraction-free experience by removing all ads from
+                        the site.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</Layout>
+
+<script>
+import Alpine from 'alpinejs';
+import { getUser } from '../lib/supabase.js';
+import { getUserTier } from '../lib/subscription.js';
+
+document.addEventListener('alpine:init', () => {
+    Alpine.data('payment', () => ({
+        isLoading: true,
+        user: null,
+        isPlus: false,
+        failed: false,
+
+        async init() {
+            const { user } = await getUser();
+            this.user = user;
+
+            if (!user) {
+                this.isLoading = false;
+                return;
+            }
+
+            const { tier } = await getUserTier({ forceRefresh: true });
+
+            if (tier === "PLUS") {
+                this.isPlus = true;
+                this.isLoading = false;
+                return;
+            }
+
+            const success = await this.validate();
+            if (success) {
+                this.isPlus = true;
+            } else {
+                this.failed = true;
+            }
+
+            this.isLoading = false;
+        },
+
+        async validate(retries = 0) {
+            const { tier } = await getUserTier({ forceRefresh: true });
+            if (tier === "PLUS") return true;
+
+            if (retries >= 10) return false;
+
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            return await this.validate(retries + 1);
+        }
+    }));
+});
+</script>
+

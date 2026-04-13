@@ -1,0 +1,614 @@
+---
+title: 8085 Program to Reverse a Block in Memory
+description: A complete 8085 assembly program to reverse the elements of an array in memory. Includes pointer manipulation, swap logic, and in-place reversal techniques.
+---
+
+import AdBlock from "../../../../../components/AdBlock.astro";
+
+Write an 8085 assembly program that reverses an array of N elements stored in memory.
+
+* Input:
+
+  * `2500H` = number of elements (N)
+  * `2501H` to `2500H + N` = elements to be reversed
+* Output:
+
+  * The same memory block will contain the reversed array after execution
+
+<AdBlock adSlot="7634600323" fullWidthResponsive={false} textAlign="left" />
+
+---
+
+## ⚡ TL;DR — Final Working Code
+
+```asm
+        ; Interface constants
+        ARRAY_BASE  EQU 2500H       ; Input array with size at [2500H]
+
+        ; Step 1: Load array size
+        LXI H, ARRAY_BASE           ; HL → start of array
+        MOV C, M                    ; C ← number of elements
+        INX H                       ; HL → first element
+
+        ; Step 2: Calculate last element address in DE
+        MOV A, C
+        ADD L                      ; A ← L + count (low byte math)
+        MOV E, A
+        MOV D, H
+        DCX DE                     ; DE → last element
+
+LOOP:   ; Step 3: Stop if pointers have met or crossed
+        MOV A, L
+        CMP E
+        JNC DONE                   ; If HL ≥ DE, we're done
+
+        ; Step 4: Swap elements at HL and DE
+        MOV A, M                   ; A ← [HL]
+        XCHG                       ; HL ⇄ DE → HL points to end
+        MOV B, M                   ; B ← [DE]
+        MOV M, A                   ; [DE] ← A
+        XCHG                       ; HL ⇄ DE → HL back to start
+        MOV M, B                   ; [HL] ← B
+
+        ; Step 5: Move pointers
+        INX H
+        DCX DE
+
+        JMP LOOP
+
+DONE:   HLT
+```
+
+---
+
+## 🧱 Step 1: Define the Interface — Reversing an Array
+
+Before writing any logic, we must first ask:
+
+> **How will this program receive input and return output?**
+
+In other words:
+**How will the external system interact with our module?**
+
+This is where we define the **interface**.
+
+---
+
+### 📦 What is an Interface?
+
+An **interface** is the agreed-upon way in which our program communicates with the outside world — whether it's hardware, another program, or a human.
+
+It defines:
+
+* **Where** inputs will come from
+* **Where** outputs will be placed
+* **How** the data will be structured
+
+Without a well-defined interface, even a perfectly correct program is unusable.
+
+---
+
+### ✅ The Interface We’ll Use
+
+We’ll assume:
+
+* The array starts at memory location `2500H`
+* The **first byte** at `2500H` contains the number of elements (let’s call this `N`)
+* The next `N` bytes are the array elements
+* Our program will **reverse those elements in place**
+
+In short:
+
+| Address     | Meaning                |
+| ----------- | ---------------------- |
+| `2500H`     | Number of elements (N) |
+| `2501H`     | Element 1              |
+| `2502H`     | Element 2              |
+| ...         | ...                    |
+| `2500H + N` | Element N              |
+
+The output will replace the input — this is called an **in-place transformation**.
+
+---
+
+### 🧠 Why This Interface Works Well
+
+This is a **good interface** because:
+
+* It’s **compact** — doesn’t waste memory
+* It’s **self-descriptive** — the first byte tells us everything we need
+* It’s **easy to test and modify** — you only need to look at one continuous block of memory
+
+---
+
+### ❌ Examples of Poor Interfaces
+
+* Storing the count in one memory location, and the array somewhere else
+  → Complicates the setup and increases error risk
+
+* Using a fixed-size array without a count
+  → Prevents reuse across different input sizes
+
+* Reversing into a different memory block without need
+  → Wastes memory unless absolutely required
+
+---
+
+### 🧾 Code (Just Read the Count)
+
+Let’s begin with a very simple step: **read the count from memory**.
+
+```asm
+LXI H, 2500H    ; HL → start of array
+MOV C, M        ; C ← number of elements
+HLT             ; Pause for inspection
+```
+
+---
+
+### 🧪 Manual Test
+
+Set memory before running:
+
+```
+2500H = 05H     ; Array length
+```
+
+After running, inspect register **C** — it should contain `05H`.
+
+This verifies that our module is correctly reading the external input — the **first requirement** of a well-behaved software component.
+
+---
+
+## 🧱 Step 2: Set Up Two Pointers for Swapping
+
+Now that we’ve read the number of elements, it’s time to decide **how we will perform the reversal**.
+
+And the answer lies in a classic strategy:
+
+> **Use two pointers — one starting at the beginning of the array, and one at the end. Swap their contents and move them toward each other until they meet.**
+
+---
+
+### 🧠 Why Two Pointers?
+
+Every reversal is a **series of swaps**:
+
+* Swap element 1 with N
+* Swap element 2 with N-1
+* …
+* Stop when the pointers cross or become equal
+
+This pattern is elegant, fast, and works for **both even and odd lengths**.
+
+---
+
+### 💡 What We’re Doing in This Step
+
+We will:
+
+1. Point `HL` to the **first element** (`2501H`)
+2. Calculate the address of the **last element** and point `DE` there
+
+   * If count = 5, last element = `2500H + 5` = `2505H`
+
+So:
+
+* `HL` → left side of the array
+* `DE` → right side of the array
+
+---
+
+### 🔧 Code
+
+```asm
+LXI H, 2500H    ; HL → start of array
+MOV C, M        ; C ← count
+INX H           ; HL → first data element (2501H)
+
+; Compute address of last element in DE
+MOV B, 00H      ; Clear upper byte
+MOV A, C        ; A ← count
+ADD L           ; Add count to lower byte of HL
+MOV E, A        ; E ← result low byte
+MOV D, H        ; D ← same as high byte (no carry handling)
+
+HLT             ; Pause and inspect HL and DE
+```
+
+📝 We’re **assuming** the array fits within the same 256-byte page (no carry in `ADD L`).
+
+---
+
+### 🧪 Manual Test
+
+Set memory:
+
+```
+2500H = 05H
+```
+
+Expected:
+
+* HL = `2501H` → first element
+* DE = `2506H` → one past the last element, i.e., ready for `DCX DE` → `2505H` (last)
+
+Run `DCX DE` and verify:
+
+* DE now points to `2505H`, the last element
+
+---
+
+### 🧠 Conceptual Takeaway
+
+We’ve now prepared the **two memory addresses** we’ll use to start swapping from both ends. This is the foundation of our loop.
+
+---
+
+<AdBlock adSlot="3777463403" layout="in-article" />
+
+## 🧱 Step 3: Swap One Pair of Elements
+
+With:
+
+* `HL` pointing to the **first element**
+* `DE` pointing to the **last element**
+
+We now perform the **core operation** of reversal:
+
+> Swap the values at the two ends.
+
+We'll do this just **once** in this step — not in a loop yet — so we can clearly observe and test the behavior.
+
+---
+
+### 💡 Why a Single Swap First?
+
+* Validates that we’re accessing memory correctly
+* Lets us inspect memory to verify the swap
+* Builds the exact logic that we’ll later repeat in a loop
+
+---
+
+### 🧠 How to Swap in 8085
+
+8085 doesn’t have a single `SWAP` instruction — we use a **temporary register** to hold one value while we transfer the other.
+
+Here's the general idea:
+
+```asm
+MOV A, M     ; A ← [HL]
+XCHG         ; HL ⇄ DE → HL now points to end
+MOV B, M     ; B ← [DE]
+MOV M, A     ; [DE] ← A (was from left)
+XCHG         ; HL ⇄ DE → HL back to left
+MOV M, B     ; [HL] ← B (was from right)
+```
+
+---
+
+### 🧾 Full Code So Far (with Swap)
+
+```asm
+LXI H, 2500H        ; HL → start of array
+MOV C, M            ; C ← count
+INX H               ; HL → first element
+
+; Compute last element pointer
+MOV B, 00H
+MOV A, C
+ADD L               ; A ← L + count
+MOV E, A            ; DE → last element (approx)
+MOV D, H
+DCX DE              ; DE → exact last element
+
+; Swap values at HL and DE
+MOV A, M            ; A ← [HL]
+XCHG                ; HL ⇄ DE → HL → end
+MOV B, M            ; B ← [DE]
+MOV M, A            ; [DE] ← value from start
+XCHG                ; HL ⇄ DE → HL → start
+MOV M, B            ; [HL] ← value from end
+
+HLT
+```
+
+---
+
+### 🧪 Manual Test
+
+Set memory:
+
+```
+2500H = 05H
+2501H = A1H
+2502H = 22H
+2503H = 33H
+2504H = 44H
+2505H = B5H
+```
+
+Expected:
+
+* After execution:
+
+  * `2501H` = B5H
+  * `2505H` = A1H
+
+Middle elements untouched (for now)
+
+---
+
+### 🧠 What We’ve Built
+
+You’ve now created the **fundamental swap operation** that will be repeated in a loop.
+
+---
+
+## 🧱 Step 4: Loop the Swapping Process
+
+We’ve successfully swapped one pair of elements. Now we’ll **loop this logic** until the array is fully reversed.
+
+---
+
+### 🧠 When to Stop Swapping?
+
+We stop when the **left and right pointers meet or cross**.
+
+That is:
+
+* As long as `HL < DE`, we keep swapping
+* Once `HL = DE` or `HL > DE`, we halt
+
+This gives us a **clean exit condition** without needing to track how many swaps remain.
+
+---
+
+### 💡 How to Check for `HL < DE`?
+
+8085 doesn’t support direct 16-bit comparison between registers like `HL < DE`, but we can simulate it.
+
+To keep things simple, we use a trick:
+
+```asm
+MOV A, L
+CMP E
+JNC DONE     ; Jump if HL ≥ DE
+```
+
+📝 **This works because we’re assuming the array size is less than 128 bytes**, so the sum of the base address (`2500H`) and the count will not cause a carry into the higher byte (`H`). That means:
+
+* `H` and `D` remain equal throughout the loop
+* So comparing the **low bytes (`L` and `E`) is enough**
+
+If the array were allowed to span across pages (e.g., cross from `25FFH` to `2600H`), we’d need to compare high bytes too.
+
+---
+
+### 🧾 Loop + Full Logic (Starting from Swap Setup)
+
+```asm
+        ; Setup
+        LXI H, 2500H
+        MOV C, M
+        INX H               ; HL → first element
+
+        MOV A, C
+        ADD L
+        MOV E, A
+        MOV D, H
+        DCX DE              ; DE → last element
+
+LOOP:   ; Stop if HL ≥ DE
+        MOV A, L
+        CMP E
+        JNC DONE
+
+        ; Swap HL and DE
+        MOV A, M
+        XCHG
+        MOV B, M
+        MOV M, A
+        XCHG
+        MOV M, B
+
+        ; Move HL forward, DE backward
+        INX H
+        DCX DE
+
+        JMP LOOP
+
+DONE:   HLT
+```
+
+---
+
+### 🧪 Manual Test
+
+Set memory:
+
+```
+2500H = 05H
+2501H = 11H
+2502H = 22H
+2503H = 33H
+2504H = 44H
+2505H = 55H
+```
+
+Expected:
+
+* After execution:
+
+  * `2501H` = 55H
+  * `2502H` = 44H
+  * `2503H` = 33H
+  * `2504H` = 22H
+  * `2505H` = 11H
+
+---
+
+### 🧠 Takeaway
+
+We’ve now turned a basic swap into a **controlled, repeatable, and terminating loop**.
+
+---
+
+## 🧱 Step 5: Refactor and Improve
+
+We’ve built a correct and working program. Now it’s time to ask the critical final question:
+
+> **Can this code be made easier to understand and maintain — without changing what it does?**
+
+This is the process of **refactoring**.
+
+---
+
+### 🧠 What is Refactoring?
+
+Refactoring is the practice of **improving the clarity, structure, and readability** of code **without changing its behavior**.
+
+We do it only **after** the code is correct, and it’s a sign of disciplined software development.
+
+---
+
+### 🔧 What We’ll Improve
+
+#### ✅ 1. Introduce Named Constants
+
+Rather than using raw addresses like `2500H` and `3000H` everywhere, we define meaningful names using `EQU`. This makes it easier to change interfaces later.
+
+#### ✅ 2. Add Semantic Comments
+
+Instead of explaining *what the instruction does* (e.g., `; increment HL`), we write **why** we’re doing it (e.g., `; move to next element`).
+
+---
+
+### 🧾 Refactored Code
+
+```asm
+        ; Interface constants
+        ARRAY_BASE  EQU 2500H       ; Input array with size at [2500H]
+        
+        ; Step 1: Load array size
+        LXI H, ARRAY_BASE           ; HL → start of array
+        MOV C, M                    ; C ← number of elements
+        INX H                       ; HL → first element
+
+        ; Step 2: Calculate last element address in DE
+        MOV A, C
+        ADD L                      ; A ← L + count (low byte math)
+        MOV E, A
+        MOV D, H
+        DCX DE                     ; DE → last element
+
+LOOP:   ; Step 3: Stop if pointers have met or crossed
+        MOV A, L
+        CMP E
+        JNC DONE                   ; If HL ≥ DE, we're done
+
+        ; Step 4: Swap elements at HL and DE
+        MOV A, M                   ; A ← [HL]
+        XCHG                       ; HL ⇄ DE → HL points to end
+        MOV B, M                   ; B ← [DE]
+        MOV M, A                   ; [DE] ← A
+        XCHG                       ; HL ⇄ DE → HL back to start
+        MOV M, B                   ; [HL] ← B
+
+        ; Step 5: Move pointers
+        INX H
+        DCX DE
+
+        JMP LOOP
+
+DONE:   HLT
+```
+
+---
+
+### ✨ What We Gained
+
+* The code is now **self-documenting**
+* Changing the base address is trivial — update `ARRAY_BASE` and you’re done
+* Anyone reading this after 6 months will still understand what it does
+
+---
+
+<AdBlock adSlot="6212055052" layout="in-article" />
+
+## 📚 Summary
+
+This problem is not just about flipping values in memory — it's a perfect exercise in **low-level thinking**, where you:
+
+* Define a **clear interface** for both input and output
+* Set up **two pointers** to implement a classic algorithm
+* Use simple tools (`XCHG`, `MOV`, `CMP`) to build powerful behavior
+* Understand the concept of **stateful loops and memory traversal**
+* Practice **refactoring** to make your code clean, reusable, and readable
+
+This kind of step-by-step construction teaches not just 8085 — but timeless software design habits.
+
+---
+
+## 📝 Exercises
+
+---
+
+### 1. 🔁 Handle Large Arrays that Span Across Pages
+
+**Problem:**
+The current program assumes that adding the array size to the pointer won’t overflow into the next memory page (i.e., `L + N` stays under `100H`).
+This fails when the array is large (e.g., size = 130).
+
+**Your Task:**
+
+* Modify the part of the code where we compute the last element (`DE`)
+* Add proper handling for **carry from low byte to high byte**
+* Ensure that `D` (high byte) is incremented if `L + C` causes a carry
+
+**Hint:** Use:
+
+```asm
+MOV A, L
+ADD C
+MOV E, A
+MOV A, H
+ACI 00H      ; Add carry from previous ADD
+MOV D, A
+```
+
+**Test Case:**
+
+```
+2500H = 82H   ; 130 elements
+2501H = 01H
+...
+```
+
+---
+
+### 2. 🧩 Break the Program into Subroutines
+
+**Problem:**
+Right now, everything is inlined in a single `MAIN` block.
+But in real-world assembly, clarity and reuse come from splitting logic into **modular subroutines**.
+
+**Your Task:**
+
+* Break the program into these subroutines:
+
+  1. `GET_LAST_PTR`: Given `HL` and count in `C`, return last element address in `DE`
+  2. `SWAP`: Swaps values at `HL` and `DE`
+  3. `SHOULD_CONTINUE`: Checks if `HL < DE`, sets Z flag appropriately
+
+* In `MAIN`, call these routines in a loop
+
+**Bonus:**
+Make `REVERSE_ARRAY` its own subroutine so you can call it from other programs with `HL` pointing to the count.
+
+**Benefits:**
+
+* Cleaner logic
+* Reusability
+* Easier to test and modify each part independently
+

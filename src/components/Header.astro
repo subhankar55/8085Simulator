@@ -1,0 +1,358 @@
+---
+import SponsorIcon from '../icons/sponsor.svg?raw';
+import LockIcon from '../icons/lock.svg?raw';
+import MenuIcon from '../icons/menu.svg?raw';
+import RegularDockLeftIcon from '../icons/regular-dock-left.svg?raw';
+import SolidDockLeftIcon from '../icons/solid-dock-left.svg?raw';
+import RegularDockRightIcon from '../icons/regular-dock-right.svg?raw';
+import SolidDockRightIcon from '../icons/solid-dock-right.svg?raw';
+import LogoWithBackground from '../icons/logo-with-green-background.svg?raw';
+import YoutubeIcon from '../icons/youtube.svg?raw';
+import ThemeSwitcher from './ThemeSwitcher.astro';
+import ActionsLoader from './ActionsLoader.jsx';
+import {FileActions} from './FileActions.jsx';
+import CodeFormatterLoader from "./CodeFormatterLoader.jsx";
+import {getUserFromSession} from '../lib/supabase.js';
+import { FaSolidRocket, FaBrandsYoutube, FaSolidBook } from 'solid-icons/fa'
+
+interface Props {
+    showActions: boolean;
+    fullwidth: boolean;
+}
+
+const {showActions, fullwidth} = Astro.props;
+
+// Get user session if logged in
+const { user } = await getUserFromSession();
+const isLoggedIn = !!user;
+const avatarUrl = user?.user_metadata?.avatar_url; // Default avatar if none exists
+---
+<header class="w-full py-0 md:py-4 justify-start md:justify-between items-center h-auto md:h-16 md:flex">
+    <div class="flex items-center gap-2 w-full">
+        <!-- <a href="/" class="w-[25vw] md:min-w-[295px] flex items-center gap-2 pl-4">
+            <span class="w-6 h-6 text-terminal"><Fragment set:html={LogoWithBackground} /></span>
+            <span class="text-gray-800 dark:text-gray-200">Sim8085</span>
+        </a> -->
+        <div class="md:block">
+            <a
+                href="/"
+                class="inline-flex items-center gap-2 ml-1 pl-1 lg:ml-2 lg:pl-2 pr-2 py-2 rounded group lg:hover:bg-terminal-200 relative"
+            >
+                <span class="w-6 h-6 text-terminal z-10 relative">
+                    <Fragment set:html={LogoWithBackground} />
+                </span>
+                <span
+                    class="hidden lg:block lg:absolute left-8 opacity-0 transform translate-x-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0 group-hover:static text-gray-800"
+                >
+                    Sim8085
+                </span>
+            </a>
+        </div>
+        <div class="flex items-center gap-2 flex-grow flex-shrink ml-auto">
+            {showActions ? (
+                <div x-data="workspace" x-show="workspaceEnabled" class="pl-4">
+                    <FileActions client:idle />
+                </div>
+            ) : null}
+            {showActions ? (
+                <div class="ml-auto hidden md:block">
+                    <CodeFormatterLoader client:idle />
+                </div>
+            ) : null}
+            {showActions ? (<div class="h-6 border-r border-r-secondary-border hidden md:block"></div>) : null}
+            {showActions ? (
+                <div class="
+                    flex w-full md:w-auto lg:min-w-[300px] md:gap-2 md:justify-end
+                    fixed bottom-0 left-0 z-50 bg-page-background py-2 px-2
+                    pb-10 md:pb-2 text-xl md:text-base
+                    md:static
+                ">
+                    <button type="button" id="left-panel-btn" class="md:hidden">
+                        <span class="regular-icon"><Fragment set:html={RegularDockLeftIcon} /></span>
+                        <span class="solid-icon"><Fragment set:html={SolidDockLeftIcon} /></span>
+                    </button>
+                    <div class="flex-grow lg:block">
+                        {showActions ?
+                            <ActionsLoader client:idle /> : null}
+                    </div>
+                    <button type="button" id="right-panel-btn" class="md:hidden">
+                        <span class="regular-icon"><Fragment set:html={RegularDockRightIcon} /></span>
+                        <span class="solid-icon"><Fragment set:html={SolidDockRightIcon} /></span>
+                    </button>
+                </div>
+            ) : null}
+            {showActions ? (<div class="h-6 border-r border-r-secondary-border hidden md:block"></div>) : null}
+        </div>
+        <div class={`flex items-start pr-2 md:pr-4`}>
+            <!-- <div class="flex flex-grow items-center gap-2 space-x-2"> -->
+            <!-- <div class="pl-2 border-r border-r-gray-500 dark:border-r-gray-600 h-4"></div> -->
+            <div class="flex-grow"></div>
+            <div class="flex items-center gap-2">
+                <ThemeSwitcher />
+                <!-- <link href="https://fonts.googleapis.com/css?family=Cookie&amp;display=swap" rel="stylesheet"> -->
+                <!-- Profile Icon and Logout Button -->
+                <div x-data="userProfile" class="relative hidden md:block">
+                    <template x-if="isLoggedIn">
+                        <div class="relative">
+                            <button @click="toggleMenu" class="flex items-center focus:outline-none cursor-pointer">
+                                <img :src="avatarUrl" alt="User Avatar"
+                                    class="w-8 h-8 rounded-full" :class="{ 'hidden': !avatarUrl }">
+                                <div class="w-8 h-8 rounded-full text-primary-foreground flex items-center mx-auto" :class="{ 'hidden': !!avatarUrl }">
+                                    <svg style="margin: 0 auto;" fill="currentColor" stroke-width="0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" style="overflow: visible; color: currentcolor;" height="1em" width="1em"><path d="M224 256a128 128 0 1 0 0-256 128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3 0 498.7 13.3 512 29.7 512h388.6c16.4 0 29.7-13.3 29.7-29.7 0-98.5-79.8-178.3-178.3-178.3h-91.4z"></path></svg>
+                                </div>
+                            </button>
+                            <div x-show="menuOpen" @click.away="menuOpen = false"
+                                 class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 rounded-md shadow-lg overflow-hidden z-10">
+                                <a href="/plus-status/"
+                                        class="block w-full px-4 py-2 text-sm text-left text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600">
+                                    Subscription Status
+                                </a>
+                                <button @click="logout"
+                                        class="block w-full px-4 py-2 text-sm text-left text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600">
+                                    Logout
+                                </button>
+                            </div>
+                        </div>
+                    </template>
+                    <template x-if="!isLoggedIn">
+                        <a href="/login/"
+                           class="inline-block text-secondary-foreground px-4 py-1 box-border rounded-md border border-inactive-border bg-secondary-background hover:bg-main-background">
+                            Login
+                        </a>
+                    </template>
+                </div>
+                <a href="https://youtu.be/7l-zS9RmAnM"
+                    class="transition-colors font-bold relative z-[1] h-8 py-4 px-4 hidden items-center gap-2 rounded-lg text-sm bg-transparent box-border text-secondary-foreground hover:text-active-foreground border border-inactive-border hover:border-secondary-border"
+                    target="_blank"
+                >
+                    <span class="text-red-foreground">
+                        <Fragment set:html={YoutubeIcon}/>
+                    </span> <span class="hidden md:inline bmc-btn-text">Demo</span>
+                </a>
+
+                <div 
+                    x-data="{
+                        index: 0, 
+                        paused: false,
+                        items: [
+                            { text: 'Demo Video', href: 'https://youtu.be/7l-zS9RmAnM', icon: 'youtube' },
+                            { text: 'Sample Programs', href: '/docs/en/programs/samples/', icon: 'book' }
+                        ],
+                        init() {
+                            setInterval(() => {
+                                if (!this.paused) {
+                                    this.index = (this.index + 1) % this.items.length;
+                                }
+                            }, 10000);
+                        }
+                    }"
+                    @mouseenter="paused = true"
+                    @mouseleave="paused = false"
+                    class="hidden md:block relative w-[160px] h-8 py-4 px-4 overflow-hidden rounded-lg text-sm bg-transparent box-border text-secondary-foreground hover:text-active-foreground border border-inactive-border hover:border-secondary-border"
+                >
+                    <template x-for="(item, i) in items" :key="i">
+                        <a
+                            :href="item.href"
+                            class="absolute left-0 top-0 w-full h-8 flex items-center justify-center gap-2 transition-transform duration-500"
+                            :style="`transform: translateY(${(i - index) * 100}%);`"
+                            target="_blank"
+                        >
+                            <span :class="{ 'text-red-foreground': item.icon === 'youtube', 'text-yellow-foreground': item.icon === 'book' }">
+                                <template x-if="item.icon === 'youtube'">
+                                    <FaBrandsYoutube />
+                                </template>
+                                <template x-if="item.icon === 'book'">
+                                    <FaSolidBook />
+                                </template>
+                            </span>
+                            <span class="text-sm font-bold bmc-btn-text">
+                                <span x-text="item.text"></span>
+                            </span>
+                        </a>
+                    </template>
+                </div>
+                <a
+                    class="group transition-colors font-bold relative z-[1] h-8 py-4 px-4 hidden md:flex items-center gap-2 rounded-lg text-sm bg-transparent hover:bg-yellow-foreground/30 box-border text-yellow-foreground hover:text-active-foreground border border-yellow-foreground"
+                    href="/upgrade/"
+                    x-data="unlockPlusButton"
+                    x-show="tier === 'FREE'"
+                    x-cloak
+                >
+                    <span class="text-yellow-foreground group-hover:text-active-foreground">
+                        <FaSolidRocket />
+                    </span> <span class="hidden md:inline bmc-btn-text">Upgrade</span>
+                </a>
+                <div x-data="mobileMenu" class="relative block md:hidden">
+                    <div class="relative">
+                        <button @click="menuOpen = !menuOpen" class="flex items-center focus:outline-none py-1 cursor-pointer">
+                            <span
+                                class="w-8 h-8 rounded-full text-xl content-center text-inactive-foreground hover:text-active-foreground flex items-center justify-end">
+                                <Fragment set:html={MenuIcon}/>
+                            </span>
+                        </button>
+                        <div x-show="menuOpen" @click.away="menuOpen = false"
+                             class="absolute right-0 mt-2 w-48 bg-secondary-background rounded-md shadow-lg overflow-hidden z-10">
+                            <template x-if="isLoggedIn">
+                                <a href="/plus-status/"
+                                        class="block w-full px-4 py-2 text-sm text-left text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600">
+                                    Subscription Status
+                                </a>
+                                <button @click="logout"
+                                        class="block w-full px-4 py-2 text-sm text-left text-active-foreground hover:bg-active-background">
+                                    Logout
+                                </button>
+                            </template>
+                            <template x-if="!isLoggedIn">
+                                <a href="/login/"
+                                   class="block w-full px-4 py-2 text-sm text-left text-active-foreground hover:bg-active-background">
+                                    Login
+                                </a>
+                            </template>
+                            <a href="/upgrade/"
+                               class="block w-full px-4 py-2 text-sm text-left text-active-foreground hover:bg-active-background">
+                                Upgrade
+                            </a>
+                            <a href="/docs/en/"
+                               target="_blank"
+                               class="block w-full px-4 py-2 text-sm text-left text-active-foreground hover:bg-active-background">
+                                Documentation
+                            </a>
+                            <a href="/changelog/"
+                               target="_blank"
+                               class="block w-full px-4 py-2 text-sm text-left text-active-foreground hover:bg-active-background">
+                                Changelog
+                            </a>
+                            <a href="https://github.com/debjitbis08/sim8085"
+                               target="_blank"
+                               class="block w-full px-4 py-2 text-sm text-left text-active-foreground hover:bg-active-background">
+                                GitHub
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<style>
+    .regular-icon {
+        display: block;
+    }
+
+    .solid-icon {
+        display: none;
+    }
+
+    .solid .solid-icon {
+        display: block
+    }
+
+    .solid .regular-icon {
+        display: none;
+    }
+    [x-cloak] { display: none !important; }
+</style>
+<script>
+    import Alpine from 'alpinejs';
+    import posthog from 'posthog-js';
+    import {supabase, getUserFromSession, signOut, getUser} from '../lib/supabase.js';
+    import { getUserTier } from '../lib/subscription.js';
+
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('workspace', () => ({
+            workspaceEnabled: true,
+
+        }));
+
+        Alpine.data('userProfile', () => ({
+            isLoggedIn: false,
+            user: null,
+            avatarUrl: null,
+            menuOpen: false,
+
+            async init() {
+                this.user = (await getUserFromSession()).user;
+                this.isLoggedIn = !!this.user;
+                this.avatarUrl = this.user?.user_metadata?.avatar_url;
+            },
+
+            toggleMenu() {
+                this.menuOpen = !this.menuOpen;
+            },
+
+            async logout() {
+                await signOut();
+                localStorage.removeItem("activeFile");
+                posthog.reset();
+                window.location.reload(); // Refresh the page after logout
+            },
+
+        }));
+
+        Alpine.data("mobileMenu", () => ({
+            isLoggedIn: false,
+            menuOpen: false,
+
+            async init() {
+                const user = (await getUserFromSession()).user;
+                this.isLoggedIn = !!user;
+            },
+
+            async logout() {
+                await signOut();
+                localStorage.removeItem("activeFile");
+                window.location.reload(); // Refresh the page after logout
+            },
+        }));
+
+        Alpine.data("unlockPlusButton", () => ({
+            tier: "FREE",
+            async init() {
+                const data = await this.fetchUserId();
+
+                this.tier = data ? data.tier : "FREE";
+            },
+
+            async fetchUserId() {
+                const { id, tier } = await getUserTier();
+
+                if (!id) return null;
+
+                return { id, tier };
+            },
+
+            showPlusDialog() {
+                window.dispatchEvent(
+                    new CustomEvent("showPlusDialog", {
+                        detail: {},
+                    })
+                );
+            }
+        }));
+    });
+
+    document.getElementById("left-panel-btn")?.addEventListener("click", function () {
+        window.dispatchEvent(
+            new CustomEvent("showLeftPanel", {
+                detail: {},
+            })
+        );
+        this.classList.toggle("solid");
+        const rightPanelBtn = document.getElementById("right-panel-btn");
+        rightPanelBtn?.classList.remove("solid");
+    });
+
+    document.getElementById("right-panel-btn")?.addEventListener("click", function () {
+        window.dispatchEvent(
+            new CustomEvent("showRightPanel", {
+                detail: {},
+            })
+        );
+        this.classList.toggle("solid");
+        const leftPanelBtn = document.getElementById("left-panel-btn");
+        leftPanelBtn?.classList.remove("solid");
+    });
+</script>
+
+
