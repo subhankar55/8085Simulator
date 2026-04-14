@@ -134,12 +134,12 @@ export function PlusDialog(props) {
                                 </div>
                                 <div>
                                     <div class="flex flex-col-reverse md:flex-row items-center justify-start gap-4">
-                                        <a
+                                        {/* <a
                                             href="/upgrade/"
                                             class="bg-yellow-foreground rounded-lg px-8 py-4 font-bold text-md md:text-lg text-gray-900"
                                         >
                                             Upgrade to Plus
-                                        </a>
+                                        </a> */}
                                         <div class="text-center md:text-left">
                                             <p>
                                                 Just{" "}
