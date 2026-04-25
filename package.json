@@ -39,6 +39,7 @@
         "@thumbmarkjs/thumbmarkjs": "^0.20.2",
         "@types/jsonwebtoken": "^9.0.10",
         "alpinejs": "^3.14.1",
+        "bcryptjs": "^2.4.3",
         "codemirror": "^6.0.1",
         "date-fns": "^4.1.0",
         "debounce": "^2.2.0",

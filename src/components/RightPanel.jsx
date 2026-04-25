@@ -9,7 +9,6 @@ import debounce from "debounce";
 import { getUserTier } from "../lib/subscription.js";
 import { onInit } from "../lib/supabase.js";
 
-const LEDArray = lazy(() => import("./LEDArray.jsx"));
 const Tutor = lazy(() => import("./Tutor.jsx"));
 
 const isOpenAiEnabled = import.meta.env.PUBLIC_OPENAI_ENABLED === "true";
@@ -125,12 +124,9 @@ export function RightPanel() {
                 }}
             ></button>
             <Tabs aria-label="right panel navigation" class={`tabs ${expanded() ? "" : "hidden"} flex flex-col`}>
-                <Tabs.List class="tabs__list mr-12 border-b-0!">
+                <Tabs.List class="tabs__list w-fit mx-auto border-b-0!">
                     <Tabs.Trigger class={`tabs__trigger ${expanded() ? "" : "hidden"}`} value="machine-code">
                         Machine Code
-                    </Tabs.Trigger>
-                    <Tabs.Trigger class={`tabs__trigger ${expanded() ? "" : "hidden"}`} value="led-array">
-                        LED Array
                     </Tabs.Trigger>
                     <Tabs.Trigger class={`tabs__trigger ${expanded() ? "" : "hidden"}`} value="metrics">
                         Metrics
@@ -144,11 +140,6 @@ export function RightPanel() {
                 </Tabs.List>
                 <Tabs.Content class="tabs__content flex-grow overflow-y-auto overflow-x-auto border-t border-t-inactive-border" value="machine-code">
                     <Assembled isPanelExpanded={expanded()} />
-                </Tabs.Content>
-                <Tabs.Content class="tabs__content flex-grow overflow-y-auto overflow-x-auto border-t border-t-inactive-border" value="led-array">
-                    <Suspense fallback={<VsLoading class="animate-spin" />}>
-                        <LEDArray />
-                    </Suspense>
                 </Tabs.Content>
                 <Tabs.Content class="tabs__content flex-grow overflow-y-auto overflow-x-auto border-t border-t-inactive-border" value="metrics">
                     <MetricsPanel />
